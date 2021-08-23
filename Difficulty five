@@ -14,3 +14,17 @@ def hex_string_to_RGB(s):
         r[RGB[i]] = color
     return r
     
+def order_weight(s):
+    #Weight being the sum of a number's didgets, and then prioritized by alphabetical order
+    def get_weight(n):
+        w = 0
+        sw = 0
+        i = 1
+        for c in n:
+            w += int(c)
+            sw += (int(c)+1)/(10**i)
+            i += 1
+        return (w, sw)
+    l = s.split(" ")
+    l.sort(key=get_weight)
+    return " ".join(l)
