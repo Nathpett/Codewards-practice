@@ -28,3 +28,18 @@ def order_weight(s):
     l = s.split(" ")
     l.sort(key=get_weight)
     return " ".join(l)
+
+
+def productFib(prod):
+    fib = {0:0, 1:1}
+    def get_fib(n):
+        if n in fib.keys():
+            return fib[n]
+        new_fib = get_fib(n-1) + get_fib(n-2)
+        fib[n] = new_fib
+        return new_fib
+    
+    i = 0
+    while get_fib(i) * get_fib(i+1) < prod:
+        i += 1
+    return [get_fib(i), get_fib(i+1), get_fib(i) * get_fib(i+1) == prod]
