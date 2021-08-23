@@ -1,0 +1,16 @@
+def hex_string_to_RGB(s): 
+    RGB = "rgb"
+    HEX = {"A":10, "B":11, "C":12, "D":13, "E":14, "F":15}
+    def hex_didget_to_decimal(d):    
+        if d in HEX.keys():
+            return HEX[d]
+        else:
+            return int(d)
+    s = s.upper()
+    r = {}
+    for i in range(3):
+        color = s[2*i+1:2*i+3]
+        color = hex_didget_to_decimal(color[0]) * 16 + hex_didget_to_decimal(color[1])
+        r[RGB[i]] = color
+    return r
+    
