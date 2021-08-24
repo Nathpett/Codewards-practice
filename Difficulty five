@@ -46,7 +46,8 @@ def productFib(prod):
         i += 1
     return [get_fib(i), get_fib(i+1), get_fib(i) * get_fib(i+1) == prod]
 
-
+# encodes/decodes decimal to str in factorial numbering system
+# see https://en.wikipedia.org/wiki/Factorial_number_system
 ALP = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 def dec_2_fact_string(nb):
     s = ""
