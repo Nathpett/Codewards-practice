@@ -1,3 +1,5 @@
+import math
+
 def hex_string_to_RGB(s): 
     RGB = "rgb"
     HEX = {"A":10, "B":11, "C":12, "D":13, "E":14, "F":15}
@@ -43,3 +45,24 @@ def productFib(prod):
     while get_fib(i) * get_fib(i+1) < prod:
         i += 1
     return [get_fib(i), get_fib(i+1), get_fib(i) * get_fib(i+1) == prod]
+
+
+ALP = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+def dec_2_fact_string(nb):
+    s = ""
+    for i in range(36, -1, -1):
+        cur_didget = 0
+        while math.factorial(i) <= nb:
+            nb -= math.factorial(i)
+            cur_didget += 1
+        s += ALP[cur_didget]
+    while s[0] == '0':
+        s = s [1:] 
+    return s
+
+def fact_string_2_dec(s):
+    n = 0
+    for i in range(0, len(s)):
+        c = s[len(s) - (i + 1)]
+        n += math.factorial(i) * ALP.index(c)
+    return n
