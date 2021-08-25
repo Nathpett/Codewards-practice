@@ -1,0 +1,16 @@
+def high(x):
+    #returns word with highest "score", score the sum of a word's characters' index + 1 in the alphabet
+    alp = 'abcdefghijklmnopqrstuvwxyz'
+    def get_index_score(w):
+        score = 0
+        for c in w:
+            score += alp.index(c) + 1
+        return score
+    
+    champ = 0
+    for word in x.split(" "):
+        cur_score = get_index_score(word)
+        if cur_score > champ:
+            champ = cur_score
+            champ_word = word
+    return champ_word
