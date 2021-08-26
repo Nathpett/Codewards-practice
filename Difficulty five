@@ -67,3 +67,15 @@ def fact_string_2_dec(s):
         c = s[len(s) - (i + 1)]
         n += math.factorial(i) * ALP.index(c)
     return n
+
+
+def perimeter(n):
+    #returns perimeter of all squares of length 0 to n + 1 in the fibonacci sequence
+    def get_fib(n):
+        #overwrite values to avoid huge memory usuage and recursion depth excess 
+        a, b = 0, 1
+        while n != 0:
+            a, b = a + b, a
+            n -= 1
+        return a
+    return 4 * (get_fib(n + 3) - 1)
