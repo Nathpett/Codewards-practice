@@ -1,0 +1,52 @@
+def get_pins(observed):
+    #brute force guesses a pin pad given seed values as potential ranges.  Returns list of all possible combinations given observed pin pad input offset by atleast one key horizontally or vertically.
+    PIN_PAD = ["123", "456", "789", " 0 "]
+    def get_potential_pins(c):
+        #return string of all pins offset by 1 horizontal or vertical move on a pin pad, and also the seed pin c
+        pins = ""
+        pins += c
+        for i in range(len(PIN_PAD)):
+            row = PIN_PAD[i]
+            if c in row:
+                # horizontal pins
+                h_index = row.index(c)
+                if h_index != len(row) - 1:
+                    pins += row[h_index + 1]
+                if h_index != 0:
+                    pins += row[h_index - 1]
+                
+                # vertical pins
+                # i == v_index
+                if i != len(PIN_PAD) - 1:
+                    pins += PIN_PAD[i + 1][h_index]
+                if i != 0:
+                    pins += PIN_PAD[i - 1][h_index]
+                    
+                #delete "blank" pins
+                pins = pins.replace(" ", "")
+                
+                return pins
+    
+    potential_pins = []
+    for c in observed:
+        potential_pins.append(get_potential_pins(c))
+    
+    r = set()
+    index_list = [0] * len(potential_pins)
+    while True:
+        cur_combo = ""
+        for i in range(len(potential_pins)):
+            cur_index = index_list[i]
+            cur_combo += potential_pins[i][cur_index]
+        r.add(cur_combo)
+
+        i = 0
+        index_list[i] += 1
+        while index_list[i] == len(potential_pins[i]):
+            index_list[i] = 0
+            i += 1
+            if i == len(potential_pins):
+                return list(r)
+            index_list[i] += 1
+            
+    return r
