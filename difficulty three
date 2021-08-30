@@ -1,0 +1,91 @@
+def hand(hole_cards, community_cards):
+    #Work in progress
+    #TODO Handle edge cases where straights of more than 5 cards can confuse straight flush detection.  
+    #TODO, add tie breaker ID functionality
+    
+    SUITS = "♠♦♥♠"
+    RANKS = "AKQJT98765432"
+
+    is_straight = False
+    is_flush = False
+    is_straight_flush = False
+    
+    straight_start = None #starting index of straight if there is any in the pool
+    
+    pool = hole_cards + community_cards
+    pool = [c if len(c) < 3 else "T" + c[-1] for c in pool]
+    pool.sort(key = lambda card: RANKS.index(card[0]))
+    #Idenify hand type
+    
+    
+    seq_streak = 1 #Tracks running straight
+    last_p_rank = pool[0][0] 
+    
+    p_streak = 1 #Tracks running streak of last_rank
+    max_p_streak = 0 #Tracks highest streak of atleast one pair, used to determine full house / two pair
+    dict_pair = {} #saves all pairs by rank.  used to full house and two pairs
+    for c in pool[1:]:
+        #change pair variables
+        if c[0] == last_p_rank:
+            p_streak += 1
+        else:
+            #reset streak
+            if p_streak > 1:
+                dict_pair[c[0]] = p_streak
+                if p_streak > max_p_streak:
+                    max_p_streak = p_streak
+            p_streak = 1
+            
+            #straight isn't broken with duplicates, only gaps, so check here
+            if RANKS.index(c[0]) == RANKS.index(last_p_rank) + 1:
+                seq_streak += 1
+                if seq_streak == 5: 
+                    straight_start = pool.index(c) - 4
+                    is_straight = True
+            else:
+                seq_streak = 1
+        last_p_rank = c[0]
+    #add last pair streak to dictonary
+    #Gotta repeat here since ending the list counts as breaking the streak
+    if p_streak > 1:
+        dict_pair[c[0]] = p_streak
+        if p_streak > max_p_streak:
+            max_p_streak = p_streak
+    
+    
+    #determine whether flush
+    just_suits = [c[1] for c in pool]
+    for suit in SUITS:
+        if just_suits.count(suit) >= 5:
+            is_flush = True
+
+                
+    if is_straight:
+        is_straight_flush = True
+        last_suit = pool[straight_start][1]
+        for i in range(straight_start + 1, straight_start + 4):
+            if last_suit != pool[i][1]:
+                is_straight_flush = False
+            last_suit = pool[i][1]
+    
+    if max_p_streak == 4:
+        hand = "four-of-a-kind"
+    elif is_straight_flush:
+        hand = "straight-flush"
+    elif max_p_streak == 3 and len(dict_pair.keys()) > 1:
+        hand = "full house"
+    elif is_flush:
+        hand = "flush"
+    elif is_straight:
+        hand = "straight"
+    elif max_p_streak == 3:
+        hand = "three-of-a-kind"
+    elif len(dict_pair.keys()) > 1:
+        hand = "two pair"
+    elif len(dict_pair.keys()) == 1:
+        hand = "pair"
+    else:
+        hand = "nothing"
+    
+    return (hand, pool[:5])
+    
