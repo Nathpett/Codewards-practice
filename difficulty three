@@ -1,8 +1,5 @@
 def hand(hole_cards, community_cards):
-    #Work in progress
-    #TODO Handle edge cases where straights of more than 5 cards can confuse straight flush detection.  
-    #TODO, add tie breaker ID functionality
-    
+    #TODO continue testing edge cases
     SUITS = "♠♦♥♠"
     RANKS = "AKQJT98765432"
 
@@ -20,6 +17,7 @@ def hand(hole_cards, community_cards):
     
     seq_streak = 1 #Tracks running straight
     last_p_rank = pool[0][0] 
+    straight_start_list = [] #Tracks first index of straights in pool, if any
     
     p_streak = 1 #Tracks running streak of last_rank
     max_p_streak = 0 #Tracks highest streak of atleast one pair, used to determine full house / two pair
@@ -31,7 +29,7 @@ def hand(hole_cards, community_cards):
         else:
             #reset streak
             if p_streak > 1:
-                dict_pair[c[0]] = p_streak
+                dict_pair[last_p_rank] = p_streak
                 if p_streak > max_p_streak:
                     max_p_streak = p_streak
             p_streak = 1
@@ -40,7 +38,7 @@ def hand(hole_cards, community_cards):
             if RANKS.index(c[0]) == RANKS.index(last_p_rank) + 1:
                 seq_streak += 1
                 if seq_streak == 5: 
-                    straight_start = pool.index(c) - 4
+                    straight_start_list.append(pool.index(c) - 4)
                     is_straight = True
             else:
                 seq_streak = 1
@@ -58,34 +56,71 @@ def hand(hole_cards, community_cards):
     for suit in SUITS:
         if just_suits.count(suit) >= 5:
             is_flush = True
+            flush_suit = suit
 
-                
-    if is_straight:
-        is_straight_flush = True
-        last_suit = pool[straight_start][1]
-        for i in range(straight_start + 1, straight_start + 4):
-            if last_suit != pool[i][1]:
-                is_straight_flush = False
-            last_suit = pool[i][1]
+    #Determine whether any of our straights are straight flushes
+    if is_straight:   
+        for straight_start in straight_start_list:
+            just_suits = [c[1] for c in pool[straight_start:straight_start + 5]]
+            for suit in SUITS:
+                if just_suits.count(suit) == 5:
+                    is_straight_flush = True
+                    
+    #construct list of ordered ranks in pool, used for constructing tiebreakers    
+    just_ranks = []
+    for c in pool:
+        if c[0] not in just_ranks:
+            just_ranks.append(c[0])
+        
+    #construct list of tuples (f, r) with f being frequency of the rank, and r the rank's index in RANKS, ordered first by their frequency, then their rank.  
+    #Then just convert those tuples to the ranks because that's all we need!
+    #e.g., ["A♠", "K♦", "K♣", "K♥", "A♥", "Q♥", "3♦"] will be [K, A], as K is more frequent.  
+    # we use this to construct tiebreakers where multipule pairs exist
+    if max_p_streak > 1:
+        ordered_pair_ranks = [(-dict_pair[r], RANKS.index(r)) for r in dict_pair.keys()]
+        ordered_pair_ranks.sort()
+        ordered_pair_ranks = [RANKS[tuple[1]] for tuple in ordered_pair_ranks]
     
     if max_p_streak == 4:
         hand = "four-of-a-kind"
+        tiebreaker = [ordered_pair_ranks[0]]
+        just_ranks.remove(tiebreaker[0])
+        tiebreaker += just_ranks[0]
     elif is_straight_flush:
         hand = "straight-flush"
+        tiebreaker = [c[0] for c in pool[straight_start_list[0]:straight_start_list[0] + 5]]
     elif max_p_streak == 3 and len(dict_pair.keys()) > 1:
         hand = "full house"
+        tiebreaker = ordered_pair_ranks[:2]
     elif is_flush:
         hand = "flush"
+        tiebreaker = [c[0] for c in pool if c[1] == flush_suit][:5]
     elif is_straight:
         hand = "straight"
+        tiebreaker = [c[0] for c in pool[straight_start_list[0]:straight_start_list[0] + 5]]
     elif max_p_streak == 3:
         hand = "three-of-a-kind"
+        tiebreaker = [list(dict_pair.keys())[0]]
+        just_ranks.remove(tiebreaker[0])
+        tiebreaker += just_ranks[:2]
     elif len(dict_pair.keys()) > 1:
         hand = "two pair"
+        tiebreaker = ordered_pair_ranks[:2]
+        for r in tiebreaker:
+            just_ranks.remove(r)
+        tiebreaker += just_ranks[0]
     elif len(dict_pair.keys()) == 1:
         hand = "pair"
+        tiebreaker = [list(dict_pair.keys())[0]]
+        just_ranks.remove(tiebreaker[0])
+        tiebreaker += just_ranks[:3]
     else:
         hand = "nothing"
+        tiebreaker = [c[0] for c in pool[:5]]
     
-    return (hand, pool[:5])
+    #replace 'T' with '10' in tiebreaker haha
+    for i, r in enumerate(tiebreaker):
+        if r == "T":
+            tiebreaker[i] = "10"
     
+    return (hand, tiebreaker)
