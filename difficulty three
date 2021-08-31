@@ -1,7 +1,7 @@
 def hand(hole_cards, community_cards):
     #TODO continue testing edge cases
     #['A♣', 'K♣'], ['4♠', '5♣', '2♣', '4♣', '7♣'] missidentified as a pair??
-    SUITS = "♠♦♥♠"
+    SUITS = "♣♦♥♠"
     RANKS = "AKQJT98765432"
 
     is_straight = False
