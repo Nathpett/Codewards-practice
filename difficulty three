@@ -1,6 +1,5 @@
 def hand(hole_cards, community_cards):
-    #TODO continue testing edge cases
-    #['A♣', 'K♣'], ['4♠', '5♣', '2♣', '4♣', '7♣'] missidentified as a pair??
+    #Just need to work out the tiebreaks for straights/straight flushes now
     SUITS = "♣♦♥♠"
     RANKS = "AKQJT98765432"
 
@@ -58,15 +57,28 @@ def hand(hole_cards, community_cards):
         if just_suits.count(suit) >= 5:
             is_flush = True
             flush_suit = suit
-
-    #Determine whether any of our straights are straight flushes
-    if is_straight:   
-        for straight_start in straight_start_list:
-            just_suits = [c[1] for c in pool[straight_start:straight_start + 5]]
-            for suit in SUITS:
-                if just_suits.count(suit) == 5:
-                    is_straight_flush = True
-                    
+    
+    
+    #Determine whether any of our flushes are straight flushes
+    if is_flush:
+        only_flush_suits = [RANKS.index(c[0]) for c in pool if c[1] == flush_suit] #List of rank's indexs for all cards in pool belonging to the flush suit
+        seq_streak = 0
+        i = 0
+        while i < len(only_flush_suits) - 1:
+            if only_flush_suits[i] == only_flush_suits[i + 1] - 1:
+                seq_streak += 1
+            elif only_flush_suits[i] != only_flush_suits[i + 1]:
+                seq_streak = 1
+            if seq_streak == 4:
+                is_straight_flush = True
+                break
+            i += 1
+        
+            
+                
+            
+                
+                
     #construct list of ordered ranks in pool, used for constructing tiebreakers    
     just_ranks = []
     for c in pool:
