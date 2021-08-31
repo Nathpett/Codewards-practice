@@ -1,5 +1,5 @@
 def hand(hole_cards, community_cards):
-    #Just need to work out the tiebreaks for straights/straight flushes now
+    #Given hand and community cards for Texas Hold'em, returns the type of hand and a list of tiebreaking card ranks.
     SUITS = "♣♦♥♠"
     RANKS = "AKQJT98765432"
 
@@ -7,17 +7,14 @@ def hand(hole_cards, community_cards):
     is_flush = False
     is_straight_flush = False
     
-    straight_start = None #starting index of straight if there is any in the pool
-    
     pool = hole_cards + community_cards
     pool = [c if len(c) < 3 else "T" + c[-1] for c in pool]
     pool.sort(key = lambda card: RANKS.index(card[0]))
     #Idenify hand type
     
-    
     seq_streak = 1 #Tracks running straight
     last_p_rank = pool[0][0] 
-    straight_start_list = [] #Tracks first index of straights in pool, if any
+    high_straight_rank = None #Tracks highest rank of straight if any
     
     p_streak = 1 #Tracks running streak of last_rank
     max_p_streak = 0 #Tracks highest streak of atleast one pair, used to determine full house / two pair
@@ -38,7 +35,7 @@ def hand(hole_cards, community_cards):
             if RANKS.index(c[0]) == RANKS.index(last_p_rank) + 1:
                 seq_streak += 1
                 if seq_streak == 5: 
-                    straight_start_list.append(pool.index(c) - 4)
+                    high_straight_rank = RANKS[RANKS.index(c[0]) - 4]
                     is_straight = True
             else:
                 seq_streak = 1
@@ -50,7 +47,6 @@ def hand(hole_cards, community_cards):
         if p_streak > max_p_streak:
             max_p_streak = p_streak
     
-    
     #determine whether flush
     just_suits = [c[1] for c in pool]
     for suit in SUITS:
@@ -58,27 +54,25 @@ def hand(hole_cards, community_cards):
             is_flush = True
             flush_suit = suit
     
-    
     #Determine whether any of our flushes are straight flushes
     if is_flush:
         only_flush_suits = [RANKS.index(c[0]) for c in pool if c[1] == flush_suit] #List of rank's indexs for all cards in pool belonging to the flush suit
         seq_streak = 0
+        highest_rank = RANKS[only_flush_suits[0]]
         i = 0
+        
         while i < len(only_flush_suits) - 1:
             if only_flush_suits[i] == only_flush_suits[i + 1] - 1:
                 seq_streak += 1
             elif only_flush_suits[i] != only_flush_suits[i + 1]:
-                seq_streak = 1
+                seq_streak = 0
+                highest_rank = RANKS[only_flush_suits[i + 1]]
             if seq_streak == 4:
                 is_straight_flush = True
+                high_straight_rank = highest_rank
                 break
             i += 1
-        
-            
-                
-            
-                
-                
+    
     #construct list of ordered ranks in pool, used for constructing tiebreakers    
     just_ranks = []
     for c in pool:
@@ -101,7 +95,8 @@ def hand(hole_cards, community_cards):
         tiebreaker += just_ranks[0]
     elif is_straight_flush:
         hand = "straight-flush"
-        tiebreaker = [c[0] for c in pool[straight_start_list[0]:straight_start_list[0] + 5]]
+        straight_start = just_ranks.index(high_straight_rank)
+        tiebreaker = [r for r in just_ranks[straight_start:straight_start + 5]]
     elif max_p_streak == 3 and len(dict_pair.keys()) > 1:
         hand = "full house"
         tiebreaker = ordered_pair_ranks[:2]
@@ -110,7 +105,8 @@ def hand(hole_cards, community_cards):
         tiebreaker = [c[0] for c in pool if c[1] == flush_suit][:5]
     elif is_straight:
         hand = "straight"
-        tiebreaker = [c[0] for c in pool[straight_start_list[0]:straight_start_list[0] + 5]]
+        straight_start = just_ranks.index(high_straight_rank)
+        tiebreaker = [r for r in just_ranks[straight_start:straight_start + 5]]
     elif max_p_streak == 3:
         hand = "three-of-a-kind"
         tiebreaker = [list(dict_pair.keys())[0]]
