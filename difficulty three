@@ -10,8 +10,8 @@ def hand(hole_cards, community_cards):
     pool = hole_cards + community_cards
     pool = [c if len(c) < 3 else "T" + c[-1] for c in pool]
     pool.sort(key = lambda card: RANKS.index(card[0]))
-    #Idenify hand type
     
+    #Idenify hand type
     seq_streak = 1 #Tracks running straight
     last_p_rank = pool[0][0] 
     high_straight_rank = None #Tracks highest rank of straight if any
@@ -40,7 +40,6 @@ def hand(hole_cards, community_cards):
             else:
                 seq_streak = 1
         last_p_rank = c[0]
-    #add last pair streak to dictonary
     #Gotta repeat here since ending the list counts as breaking the streak
     if p_streak > 1:
         dict_pair[c[0]] = p_streak
@@ -79,7 +78,7 @@ def hand(hole_cards, community_cards):
         if c[0] not in just_ranks:
             just_ranks.append(c[0])
         
-    #construct list of tuples (f, r) with f being frequency of the rank, and r the rank's index in RANKS, ordered first by their frequency, then their rank.  
+    #construct list of tuples (f, r) for all pairs/of-a-kind with f being frequency of the rank, and r the rank's index in RANKS, ordered first by their frequency, then their rank.  
     #Then just convert those tuples to the ranks because that's all we need!
     #e.g., ["A♠", "K♦", "K♣", "K♥", "A♥", "Q♥", "3♦"] will be [K, A], as K is more frequent.  
     # we use this to construct tiebreakers where multipule pairs exist
