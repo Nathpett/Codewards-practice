@@ -132,3 +132,53 @@ def hand(hole_cards, community_cards):
             tiebreaker[i] = "10"
     
     return (hand, tiebreaker)
+
+
+def volume(heightmap):
+    # By filling from the bottom up, we can treat depths lower than the one we're trying to fill at as the same as an edge.
+    # make a list of all heights, fill the lowest using a flood fill Algorithm until no more values of that height exist
+    # assign None to any cells that exlusivly drain into an edge, or exlusivly drain into None
+
+    # construct list of all heights in acending order
+    height_list = list({h for row in heightmap for h in row})
+    height_list.sort()
+
+    #Wrap heightmap in None value so we don't have to worry checking for edges
+    for n, row in enumerate(heightmap):
+        heightmap[n] = [None] + row + [None]
+    heightmap = [[None]*len(heightmap[0])] + heightmap + [[None]*len(heightmap[0])]
+    
+    #TODO, floodfill all instances of lowest heights until the map is filled
+
+def flood_fill(x, y, heightmap):
+    #attempt to flood fill at given coordinate using span filling 
+    #overwright the reigon flood filled with its lowest wall's value (or None, if the reigon would drain into an edge)
+    #returns sum of water filled
+    
+    #Because we're filling from the bottom up, we will never see height values lower than the initial seed height.
+    
+    h = heightmap[x][y] #h being the layer we're trying to flood fill on
+    lowest_wall = 10000 # being the lowest wall we've collided with, None trumps all.  int is unbounded in python, and the game establishes no max wall height, so let's hope 10000 works
+    seeds =[(x, y)] #Could use Queue here, but just a list for now
+    while len(seeds) != 0:
+        seed = seeds.pop(0)
+        
+        #scan above and below for new seed spots
+        #TODO, just make this into its own function for DRIP's sake
+        if heightmap[x][y + 1] != h:
+            above_collide = True
+            #Catalog the height somehow
+        else:
+            seeds.append((x, y + 1))
+            above_collide = False
+        
+        if heightmap[x][y - 1] != h:
+            below_collide = True
+            #Catalog the height somehow
+        else:
+            seeds.append((x, y - 1))
+            below_collide = False
+        #Attempt going right
+        
+        
+        #attempt going left
