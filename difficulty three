@@ -133,15 +133,16 @@ def hand(hole_cards, community_cards):
     
     return (hand, tiebreaker)
 
-#works but is too slow and ugly
+
 def volume(heightmap):
     # By filling from the bottom up, we can treat depths lower than the one we're trying to fill at as the same as an edge.
     # make a list of all heights, fill the lowest using a flood fill Algorithm until no more values of that height exist
     # assign None to any cells that exlusivly drain into an edge, or exlusivly drain into None
-    
-    #convert numpy array to list of list because thats all I ever had in mind when I made this thing
+
+    # convert numpy array to list of list because thats all I ever had in mind when I made this thing
     heightmap = [list(row) for row in heightmap]
-    
+
+
     def flood_fill(x, y):
         def scan(x, y):
             # returns true if no collision
@@ -176,18 +177,17 @@ def volume(heightmap):
         seeds = [(x, y)]  # Could use Queue here, but just a list for now
         while len(seeds):
             seed = seeds.pop(0)
-            
-                
+
             # Tracks if collided above or below, primes for seed storage
             above_collide = True
             below_collide = True
 
             # attempt right
             x, y = seed
-            #end early if seed has been filled already
+            # end early if seed has been filled already
             if heightmap[y][x] == "f":
                 continue
-            
+
             rightmost = x
             leftmost = x
             x -= 1  # so we hit index 1 the first time
@@ -268,15 +268,10 @@ def volume(heightmap):
     vol = 0
     # floodfill all instances of lowest heights until the map is filled
     for h in height_list[:-1]:
-        f_heightmap = [n for row in heightmap for n in row]
-        while h in f_heightmap:  # while height still exists in heightmap...
-            # Find a coordinate and flood fill there
-            i = f_heightmap.index(h)
-            x = i % map_width
-            y = i // map_width
+        for y, row in enumerate(heightmap):
+            while h in row:
+                x = row.index(h)
+                vol += flood_fill(x, y)
 
-            vol += flood_fill(x, y)
-
-            f_heightmap = [n for row in heightmap for n in row]
 
     return vol
