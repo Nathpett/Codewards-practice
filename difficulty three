@@ -133,19 +133,24 @@ def hand(hole_cards, community_cards):
     
     return (hand, tiebreaker)
 
-
+#works but is too slow and ugly
 def volume(heightmap):
     # By filling from the bottom up, we can treat depths lower than the one we're trying to fill at as the same as an edge.
     # make a list of all heights, fill the lowest using a flood fill Algorithm until no more values of that height exist
     # assign None to any cells that exlusivly drain into an edge, or exlusivly drain into None
-
+    
+    #convert numpy array to list of list because thats all I ever had in mind when I made this thing
+    heightmap = [list(row) for row in heightmap]
+    
     def flood_fill(x, y):
         def scan(x, y):
-            #returns true if no collision
-            #collision happens should the cells height not match the initial seeds height: h
-            #overwright lowest_wall as needed when collisions happen
+            # returns true if no collision
+            # collision happens should the cells height not match the initial seeds height: h
+            # overwright lowest_wall as needed when collisions happen
             nonlocal lowest_wall
-            cur_height = heightmap[x][y]
+            cur_height = heightmap[y][x]
+            if cur_height == "f":
+                return False
             if cur_height == h:
                 return True
             else:
@@ -153,43 +158,53 @@ def volume(heightmap):
                     lowest_wall = None
                 else:
                     lowest_wall = min(lowest_wall, cur_height)
-                return False 
-        #attempt to flood fill at given coordinate using span filling 
-        #overwright the reigon flood filled with its lowest wall's value (or None, if the reigon would drain into an edge)
-        #returns sum of water filled
+                return False
+                # attempt to flood fill at given coordinate using span filling
 
-        #Because we're filling from the bottom up, we will never see height values lower than the initial seed height.
+        # overwright the reigon flood filled with its lowest wall's value (or None, if the reigon would drain into an edge)
+        # returns sum of water filled
 
-        h = heightmap[x][y] #h being the layer we're trying to flood fill on
-        lowest_wall = 10000 # being the lowest wall we've collided with, None trumps all.  int is unbounded in python, and the game establishes no max wall height, so let's hope 10000 works
-        
-        rightmost = x #right most x value in current line
-        leftmost = x #left most x value in current line
-        line_fill_list = [] #list of cells represented by tuples (xl, xr, y) to be "filled" by lowest_wall value
-        
-        above_collide = True #Tracks if collided above or below, primes for seed storage
-        below_collide = True 
-        
-        seeds =[(x, y)] #Could use Queue here, but just a list for now
+        # Because we're filling from the bottom up, we will never see height values lower than the initial seed height.
+
+        h = heightmap[y][x]  # h being the layer we're trying to flood fill on
+        lowest_wall = 10000  # being the lowest wall we've collided with, None trumps all.  int is unbounded in python, and the game establishes no max wall height, so let's hope 10000 works
+
+        rightmost = x  # right most x value in current line
+        leftmost = x  # left most x value in current line
+        line_fill_list = []  # list of cells represented by tuples (xl, xr, y) to be "filled" by lowest_wall value
+
+        seeds = [(x, y)]  # Could use Queue here, but just a list for now
         while len(seeds):
             seed = seeds.pop(0)
+            
+                
+            # Tracks if collided above or below, primes for seed storage
+            above_collide = True
+            below_collide = True
 
-            #attempt right
+            # attempt right
             x, y = seed
-            x -= 1 #so we hit index 1 the first time
+            #end early if seed has been filled already
+            if heightmap[y][x] == "f":
+                continue
+            
+            rightmost = x
+            leftmost = x
+            x -= 1  # so we hit index 1 the first time
             while scan(x + 1, y):
                 x += 1
                 rightmost = x
-                
-                #scan above
+                heightmap[y][x] = "f"
+
+                # scan above
                 if scan(x, y + 1):
                     if above_collide:
                         seeds.append((x, y + 1))
                         above_collide = False
                 else:
                     above_collide = True
-                        
-                #scan below 
+
+                # scan below
                 if scan(x, y - 1):
                     if below_collide:
                         seeds.append((x, y - 1))
@@ -197,68 +212,71 @@ def volume(heightmap):
                 else:
                     below_collide = True
 
-            #attempt left
+            # attempt left
             x, y = seed
+            above_collide = True
+            below_collide = True
             while scan(x - 1, y):
                 x -= 1
                 leftmost = x
-                
-                #DRIP this away somehow?
-                #scan above
+                heightmap[y][x] = "f"
+                # DRIP this away somehow?
+                # scan above
                 if scan(x, y + 1):
                     if above_collide:
                         seeds.append((x, y + 1))
                         above_collide = False
                 else:
                     above_collide = True
-                        
-                #scan below 
+
+                # scan below
                 if scan(x, y - 1):
                     if below_collide:
                         seeds.append((x, y - 1))
                         below_collide = False
                 else:
                     below_collide = True
-            
+
             line_fill_list.append((leftmost, rightmost, y))
-        
-        #overwrite all ranges in line_fill_list, sum up their total change in height
+
+        # overwrite all ranges in line_fill_list, sum up their total change in height
         cells_filled = 0
         for line in line_fill_list:
             xl, xr, y = line
             cells_filled += xr + 1 - xl
             for x in range(xl, xr + 1):
-                heightmap[x][y] = lowest_wall
-        
-        #finally, return the volume this flood_fill filled
+                heightmap[y][x] = lowest_wall
+
+        # finally, return the volume this flood_fill filled
         if lowest_wall == None:
             return 0
         else:
-            return cells_filled * (lowest_wall - h)   
-    
-    # construct list of all heights in acending order
+            return cells_filled * (lowest_wall - h)
+
+            # construct list of all heights in acending order
+
     height_list = list({h for row in heightmap for h in row})
     height_list.sort()
 
-    #Wrap heightmap in None value so we don't have to worry checking for edges
+    # Wrap heightmap in None value so we don't have to worry checking for edges
     for n, row in enumerate(heightmap):
         heightmap[n] = [None] + row + [None]
-    heightmap = [[None]*len(heightmap[0])] + heightmap + [[None]*len(heightmap[0])]
-    
+    heightmap = [[None] * len(heightmap[0])] + heightmap + [[None] * len(heightmap[0])]
+
     map_width = len(heightmap[0])
-    map_height = len(heightmap)
-    
+
     vol = 0
-    #floodfill all instances of lowest heights until the map is filled
-    for h in height_list:
+    # floodfill all instances of lowest heights until the map is filled
+    for h in height_list[:-1]:
         f_heightmap = [n for row in heightmap for n in row]
-        while h in f_heightmap: #while height still exists in heightmap...
-            #Find a coordinate and flood fill there
+        while h in f_heightmap:  # while height still exists in heightmap...
+            # Find a coordinate and flood fill there
             i = f_heightmap.index(h)
-            x = i % map_height
-            y = i // map_height
-            
+            x = i % map_width
+            y = i // map_width
+
             vol += flood_fill(x, y)
+
             f_heightmap = [n for row in heightmap for n in row]
-    
+
     return vol
