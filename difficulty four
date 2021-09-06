@@ -50,3 +50,20 @@ def get_pins(observed):
             index_list[i] += 1
             
     return r
+
+def next_bigger(n):
+    #returns the next biggest number that can be made using the given number's didgets
+    #returns -1 if input is already the biggest number that can be made
+    
+    n = list(str(n))
+    for i in range(len(n)):
+        r = n[-1-i:]
+        if r == sorted(r, reverse=True):
+            continue
+        highest_place = r[0]
+        higher = [v for v in r if int(v) > int(highest_place)]
+        next_largest = min(higher)
+        r.remove(next_largest)
+        return int("".join(n[:-1-i] + [next_largest] + sorted(r, reverse=False)))
+    return -1
+        
