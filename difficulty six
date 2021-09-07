@@ -14,3 +14,16 @@ def high(x):
             champ = cur_score
             champ_word = word
     return champ_word
+
+
+
+def dig_pow(n, p):
+    #returns k if any, where k is: (a ^ p + b ^ (p+1) + c ^(p+2) + d ^ (p+3) + ...) = n * k <abcd... being each didget in n>
+    s = 0
+    for i, d in enumerate(str(n)):
+        d = int(d)
+        s += d**(p + i)
+    if s % n == 0:
+        return s//n
+    else:
+        return -1
