@@ -27,3 +27,18 @@ def dig_pow(n, p):
         return s//n
     else:
         return -1
+
+
+def bishop(start_pos, end_pos, num_moves):
+    returns whether a bishop in chess can reach end_pos from start_pos given some number of moves num_moves
+    row_l = "12345678"
+    col_l = "abcdefgh"
+
+    y, x = start_pos
+    y, x = col_l.index(y), row_l.index(x)
+    yy, xx = end_pos
+    yy, xx = col_l.index(yy), row_l.index(xx)
+    return ((x + y) % 2 == (xx + yy) % 2) \
+           and ((num_moves == 0 and start_pos == end_pos) \
+           or (num_moves == 1 and abs(x - xx) == abs(y - yy)) \
+           or (num_moves >= 2))
