@@ -42,3 +42,8 @@ def bishop(start_pos, end_pos, num_moves):
            and ((num_moves == 0 and start_pos == end_pos) \
            or (num_moves == 1 and abs(x - xx) == abs(y - yy)) \
            or (num_moves >= 2))
+           
+
+def tower_builder(n_floors, brick = "*", space = " "):
+    #returns pyramid of n_floors height
+    return [(n_floors - 1 - i) * space + (i * 2 + 1) * brick + (n_floors - 1 - i) * space for i in range(n_floors)]
