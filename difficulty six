@@ -47,3 +47,17 @@ def bishop(start_pos, end_pos, num_moves):
 def tower_builder(n_floors, brick = "*", space = " "):
     #returns pyramid of n_floors height
     return [(n_floors - 1 - i) * space + (i * 2 + 1) * brick + (n_floors - 1 - i) * space for i in range(n_floors)]
+    
+def likes(names):
+    #given list of names, returns short summary of those who like it.
+    l = len(names)
+    if l == 0:
+        return 'no one likes this'
+    elif l == 1:
+        return f'{names[0]} likes this'
+    elif l == 2:
+        return f'{names[0]} and {names[1]} like this'
+    elif l == 3:
+        return f'{names[0]}, {names[1]} and {names[2]} like this'
+    else:
+        return f'{names[0]}, {names[1]} and {str(l - 2)} others like this'
