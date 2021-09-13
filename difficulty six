@@ -61,3 +61,23 @@ def likes(names):
         return f'{names[0]}, {names[1]} and {names[2]} like this'
     else:
         return f'{names[0]}, {names[1]} and {str(l - 2)} others like this'
+
+def last_survivors(string):
+    #substitute two equal letters by the next letter of the alphabet until no further substitutions can be made
+    ALPHA = "abcdefghijklmnopqrstuvwxyza"
+    _list = list(string)
+    z_repeat = True
+    
+    while z_repeat:
+        for c in ALPHA[:-1]:
+            while _list.count(c) > 1:
+                _list.remove(c)
+                _list.remove(c)
+                _list += ALPHA[ALPHA.index(c) + 1]
+        else:
+            z_repeat = _list.count('a') > 1
+    return "".join(_list)
+
+
+
+
