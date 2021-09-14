@@ -67,3 +67,42 @@ def next_bigger(n):
         return int("".join(n[:-1-i] + [next_largest] + sorted(r, reverse=False)))
     return -1
         
+        
+def knight(p1, p2):
+    #returns minimum number of moves a knight in chess can make between two positions on a chess board
+    #input is given as 'a1', 'h8', etc.
+    
+    #Going to use Breadth First Search.
+    #node = column + row * 8
+        #where row = ROWS.index(p[1])
+        #and column = COLS.index(p[0])
+    COLS = 'abcdefgh'
+    ROWS = '12345678'
+    K_MOVES = [-17, -15, -10, -6, 6, 10, 15, 17] 
+    
+    n0 = COLS.index(p1[0]) + 8 * ROWS.index(p1[1])
+    nd = COLS.index(p2[0]) + 8 * ROWS.index(p2[1])
+    
+    visited = [None] * 64
+    queue = [n0]
+    
+    found = False
+    while queue and not found:
+        n = queue.pop(0)
+        n_col = n % 8
+        valid_moves = [n + offset for offset in K_MOVES]
+        valid_moves = [e for e in valid_moves if (0 <= e <= 63) and n_col - 2 <= (e % 8) <= n_col + 2]
+        for e in valid_moves:
+            if e == nd:
+                found = True
+            if visited[e] == None:
+                visited[e] = n
+                queue.append(e)
+
+    #Traverse parents starting at nd to get to n0.
+    series = [nd]
+    while n0 not in series:
+        n = series[-1]
+        series.append(visited[n])
+    
+    return len(series) - 1
