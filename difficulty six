@@ -79,5 +79,31 @@ def last_survivors(string):
     return "".join(_list)
 
 
+def decode(r):
+    #decodes string encoding using following pseudocode
+    #encode("mer", 6015)  -->  "6015ekx"
+    # for each char in string, multiply index in ALPHA by n, take modulo, and use result as index in ALPHA for new encoded value
 
-
+    ALPHA = "abcdefghijklmnopqrstuvwxyz"
+    
+    c = "0"
+    i = 0
+    while c.isnumeric():
+        c = r[i]
+        i += 1
+    i -= 1
+    
+    n = int(r[:i])
+    s = r[i:]
+    
+    step = n % 26
+    
+    if step % 2 == 0 or step == 13:
+        return "Impossible to decode"
+    
+    decode_key = [step * i % 26 for i in range(26)]
+    sd = ''
+    for c in s:
+        i = ALPHA.index(c)
+        sd += ALPHA[decode_key.index(i)]
+    return sd
