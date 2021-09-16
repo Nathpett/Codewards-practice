@@ -106,3 +106,27 @@ def knight(p1, p2):
         series.append(visited[n])
     
     return len(series) - 1
+
+def valid_sudoku(board):
+    #validates sudoku board, returns false if any 0s
+    #board is a list of lists of length 9
+    
+    def simple_validate(_list):
+        for row in _list:
+            if sum(row) != 45:
+                return False
+            for i in range(1, 9):
+                if row.count(i) != 1:
+                    return False
+        return True
+    
+    cells = [[] for i in range(9)]
+    columns = [[] for i in range(9)]
+    for i, row in enumerate(board):
+        for j, n in enumerate(row):
+            if n == 0:
+                return False
+            columns[j].append(n)
+            cells[i//3 + 3 * (j//3)].append(n)
+    
+    return simple_validate(board) and simple_validate(cells) and simple_validate(columns)
