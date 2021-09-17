@@ -107,3 +107,17 @@ def decode(r):
         i = ALPHA.index(c)
         sd += ALPHA[decode_key.index(i)]
     return sd
+
+def uncollapse(digits):
+    #Takes string of written out single didget numbers without spaces, returns with spaces
+    # "fourfiveeightninenine ==> four five eight nine nine 
+    NUMS = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "zero"]
+    s = []
+    while digits:
+        i = 0
+        while digits[:i] not in NUMS:
+            i += 1
+        s.append(digits[:i])
+        digits = digits[i:]
+    return " ".join(s)
+    
