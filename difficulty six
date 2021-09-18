@@ -121,3 +121,14 @@ def uncollapse(digits):
         digits = digits[i:]
     return " ".join(s)
     
+def encode_v1(text):
+    #swaps 2nd and last letter, replaces first letter with its character code
+    s = []
+    if len(text) < 2: return text
+    for word in text.split(" "):
+        word = list(word)
+        if len(word) > 1:
+            word[-1], word[1] = word[1], word[-1]
+        word[0] = str(ord(word[0]))
+        s.append("".join(word))
+    return " ".join(s)
