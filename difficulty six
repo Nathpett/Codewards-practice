@@ -132,3 +132,17 @@ def encode_v1(text):
         word[0] = str(ord(word[0]))
         s.append("".join(word))
     return " ".join(s)
+    
+def decipher_v1(string):
+    s = []
+    for word in string.split(" "):
+        i = 1
+        while word[:i].isnumeric() and i != len(word) + 1:
+            i += 1
+        i -= 1
+        a = chr(int(word[:i]))
+        word = list(word[i:])
+        if len(word) > 1:
+            word[0], word [-1] = word[-1], word[0]
+        s.append(a + "".join(word))
+    return " ".join(s)
