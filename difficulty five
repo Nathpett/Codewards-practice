@@ -189,3 +189,12 @@ def consec_kprimes(k, arr):
         if p == k_arr[i + 1] == k:
             con_ct += 1
     return con_ct
+    
+    
+def make_readable(ss):
+    #Takes time in seconds up to 359999 and returns human readable time in HH:MM:SS format
+    hh = ss // (60 * 60)
+    ss -= hh * (60 * 60)
+    mm = ss // 60
+    ss -= mm * 60
+    return f"{str(hh).rjust(2, '0')}:{str(mm).rjust(2, '0')}:{str(ss).rjust(2, '0')}"
