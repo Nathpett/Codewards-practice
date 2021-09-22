@@ -160,3 +160,11 @@ def polybius(text):
         else:
             r += c
     return r
+
+def bowling_pins(arr):
+    #returns ASCII image of bowling pins minus those passed in arr
+    crude = {1:27, 2:18, 3:20, 4:9, 5:11, 6:13, 7:0, 8:2, 9:4, 10:6}
+    pins = list("I I I I\n I I I \n  I I  \n   I   ")
+    for n in arr:
+        pins[crude[n]] = " "
+    return "".join(pins)
