@@ -168,3 +168,35 @@ def bowling_pins(arr):
     for n in arr:
         pins[crude[n]] = " "
     return "".join(pins)
+
+def get_simple_binomial(n):
+    #returns expansion of (a+b)^n
+    
+    if n == 0:
+        return '1'
+    row = [1]
+    r = ""
+    #Generate row of pascal's triangle for coefficients 
+    for i in range(abs(n)):
+        row = [row[i] + row[i + 1] for i in range(len(row) - 1)]
+        row = [1] + row + [1]
+    p_row = [str(i) if i > 1 else "" for i in row]
+        
+    for i in range(abs(n) + 1):
+        r += f'{p_row[i]}'
+        if abs(n) - i > 0:
+            if abs(n) - i > 1:
+                r += f'a^{abs(n) - i}'
+            else:
+                r += 'a'
+        if i > 0:
+            if i > 1:
+                r += f'b^{i}'
+            else:
+                r += 'b'
+        r += '+'
+    r = r[:-1]
+    if n < 0:
+        return f'1/({r})'
+    else:
+        return r
