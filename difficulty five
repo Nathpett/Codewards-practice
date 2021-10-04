@@ -198,3 +198,17 @@ def make_readable(ss):
     mm = ss // 60
     ss -= mm * 60
     return f"{str(hh).rjust(2, '0')}:{str(mm).rjust(2, '0')}:{str(ss).rjust(2, '0')}"
+
+
+def page_digits(pages):
+    #Returns sum of didgets of all pages in a book of given length
+    didget_ct = len(str(pages))   
+    n = 0
+    for i in range(0, didget_ct - 1):
+        n += 9 * (10**i) * (i + 1)
+    if didget_ct > 1:
+        past_page_ct = int("9"* (didget_ct - 1))
+    else:
+        past_page_ct = 0
+    n += didget_ct * (pages - past_page_ct)
+    return n
