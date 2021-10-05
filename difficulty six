@@ -200,3 +200,14 @@ def get_simple_binomial(n):
         return f'1/({r})'
     else:
         return r
+
+def columnize(items, columns_count):
+    #Returns string of given items divided into columns, ljustifying and cell sizing as needed
+    if len(items) < columns_count:
+        return " | ".join(items)
+    max_lens = [max([len(items[i]) for i in range(j, len(items), columns_count)]) for j in range(columns_count)]
+    items = [item.ljust(max_lens[i % columns_count]) for i, item in enumerate(items)]
+    delimiter_pattern = [" | "] * (columns_count - 1) + ["\n"]
+    delimiters = [delimiter_pattern[i % len(delimiter_pattern)] for i in range(len(items))]
+    delimiters[-1] = ""
+    return "".join([items[i] + delimiters[i] for i in range(len(items))])
