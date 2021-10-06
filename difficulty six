@@ -211,3 +211,7 @@ def columnize(items, columns_count):
     delimiters = [delimiter_pattern[i % len(delimiter_pattern)] for i in range(len(items))]
     delimiters[-1] = ""
     return "".join([items[i] + delimiters[i] for i in range(len(items))])
+
+def narcissistic( value ):
+    #Returns bool, whether number is narcissistic.  I.e. whether the sum of each didget raised to the number's total number of didgets is equal to the given number.  
+    return value == sum([int(n) ** len(str(value)) for n in str(value)])
