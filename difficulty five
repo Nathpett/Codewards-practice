@@ -212,3 +212,36 @@ def page_digits(pages):
         past_page_ct = 0
     n += didget_ct * (pages - past_page_ct)
     return n
+    
+from math import ceil
+def odd_sequence(arr):
+    #WIP
+    #Returns number of sequences in arr with an odd number of odd numbers.  Harder than it sounds, still working on it
+    extreme_odd_index_left = 0
+    extreme_odd_index_right = len(arr) - 1
+    
+    arr = [n % 2 == 1 for n in arr]
+    if arr.count(True) == 0:
+        return 0
+    extreme_odd_index_left = arr.index(True)
+    extreme_odd_index_right = len(arr) - list(reversed(arr)).index(True)
+    
+    base_len = 1 + extreme_odd_index_right - extreme_odd_index_left
+    base = ((base_len) // 2) ** 2
+
+    if base_len % 2 == 1:
+        base += base_len // 2
+    
+    if extreme_odd_index_left != 0 and extreme_odd_index_right != len(arr):
+        return "AA"
+    
+    if extreme_odd_index_right != 0:
+        end_len = extreme_odd_index_left
+        base += len(arr) // 2 * end_len
+    
+    if extreme_odd_index_right != len(arr):
+        end_len = len(arr) - 1 - extreme_odd_index_right
+        base += len(arr) // 2 * end_len
+        
+    return base
+    
