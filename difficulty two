@@ -1,6 +1,7 @@
 def calc(expression):
     #Evaluates valid mathematical expressions with -+*/() and whitespace.  
     #API restriction prevents the use of eval() and exec()
+    #TODO, edge cases involving negative numbers cause some kind of error.  Look into that.  
     
     #helper
     def pseudo_eva(n1, n2, sym):    
