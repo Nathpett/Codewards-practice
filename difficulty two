@@ -1,7 +1,7 @@
 def calc(expression):
     #Evaluates valid mathematical expressions with -+*/() and whitespace.  
     #API restriction prevents the use of eval() and exec()
-    #TODO, edge cases involving negative numbers cause some kind of error.  Look into that.  
+    #TODO, Adding floating points to a string during paprentheses evaluation causes significant margins of error for long expressions.  
     
     #helper
     def pseudo_eva(n1, n2, sym):    
@@ -13,10 +13,8 @@ def calc(expression):
         elif sym == "*":
             return n1 * n2
         elif sym == "/":
-            return n1 / n2
-    
-    # remove whitespace for easier parsing
-    expression = expression.replace(" ", "")
+            return n1 / n2    # remove whitespace for easier parsing
+        expression = expression.replace(" ", "")
     
     # recursively evaluate all expressions in parentheses
     while "(" in expression:
@@ -36,8 +34,15 @@ def calc(expression):
 
         n_expression = expression[left_index:right_index]
         expression = expression[:left_index - 1] + str(calc(n_expression)) + expression[right_index + 1:]
-
-    #convert expression to list of numbers and symbols
+    
+    #negate double negatives
+    while "--" in expression:
+        i = expression.index("--")
+        if i == 0 or not expression[i-1].isnumeric():
+            expression = expression[:i] + expression[i + 2:]
+        else:
+            expression = expression[:i] + "+" + expression[i + 2:]
+            
     numbers = []
     syms = []
     running_n = ""
@@ -58,7 +63,7 @@ def calc(expression):
     else:
         numbers.append(int(running_n))
     
-    #TODO, DRIP THIS TOGETHER   
+            
     while "*" in syms or "/" in syms:
         #brute force find first index of * or /
         i = 0
@@ -71,7 +76,7 @@ def calc(expression):
         numbers.insert(i, pseudo_eva(n1, n2, sym))
         
     while "+" in syms or "-" in syms:
-        #brute force find first index of + or -
+        #brute force find first index of * or /
         i = 0
         while not (syms[i] == "+" or syms[i] == "-"):
             i += 1
@@ -82,3 +87,4 @@ def calc(expression):
         numbers.insert(i, pseudo_eva(n1, n2, sym))
 
     return numbers[0]
+
