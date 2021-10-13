@@ -2,6 +2,7 @@ def calc(expression):
     #Evaluates valid mathematical expressions with -+*/() and whitespace.  
     #API restriction prevents the use of eval() and exec()
     #TODO, Adding floating points to a string during paprentheses evaluation causes significant margins of error for long expressions.  
+        #Need to push expression to list of numbers/symbols BEFORE doing parenthese recursion!
     
     #helper
     def pseudo_eva(n1, n2, sym):    
