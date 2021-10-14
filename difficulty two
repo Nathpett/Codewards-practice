@@ -1,91 +1,101 @@
 def calc(expression):
-    #Evaluates valid mathematical expressions with -+*/() and whitespace.  
-    #API restriction prevents the use of eval() and exec()
-    #TODO, Adding floating points to a string during paprentheses evaluation causes significant margins of error for long expressions.  
-        #Need to push expression to list of numbers/symbols BEFORE doing parenthese recursion!
-    
-    #helper
-    def pseudo_eva(n1, n2, sym):    
-        #Due to API restrictions, this is the best way I can think to translate the symbols to an operation
-        if sym == "+":
-            return n1 + n2
-        elif sym == "-":
-            return n1 - n2
-        elif sym == "*":
-            return n1 * n2
-        elif sym == "/":
-            return n1 / n2    # remove whitespace for easier parsing
-        expression = expression.replace(" ", "")
-    
+    #rewrote the whole thing and that didn't fix it... I'll just need to break down what's going on for these edge cases somehow
+    # remove whitespace for easier parsing
+    expression = expression.replace(" ", "")
+
+    # convert string to more managable list
+    expr_list = []
+    running_n = ""
+    i = 0
+    while i < len(expression):
+        while i < len(expression) and not (expression[i].isnumeric()):
+            if expression[i] == "-":
+                if expression[i + 1] == "(":
+                    if i != 0 and expression[i - 1].isnumeric():
+                        expr_list += ["+"]
+                    expr_list += [-1, "*", "("]
+                    i += 2
+                    continue
+                else:
+                    if i != 0 and expression[i - 1].isnumeric():
+                        expr_list += ["+"]
+                    if running_n == "-":
+                        running_n = ""
+                    else:
+                        running_n = expression[i]
+                    i += 1
+            else:
+                expr_list += expression[i]
+                i += 1
+
+        while i < len(expression) and expression[i].isnumeric():
+            running_n += expression[i]
+            i += 1
+        else:
+            if i < len(expression):
+                expr_list.append(float(running_n))
+                running_n = ""
+    else:
+        if len(running_n) > 0:
+            expr_list.append(float(running_n))
+
+    return sub_calc(expr_list)[0]
+
+
+def sub_calc(e_list):
     # recursively evaluate all expressions in parentheses
-    while "(" in expression:
-        left_index = expression.index("(")
+    while "(" in e_list:
+        left_index = e_list.index("(")
         right_index = left_index
         is_opn = -1
 
         # expression is opn until we've seen as many closing parentheses as we have opn ones.
         while is_opn:
             right_index += 1
-            c = expression[right_index]
+            c = e_list[right_index]
             if c == "(":
                 is_opn += -1
             elif c == ")":
                 is_opn += 1
         left_index += 1
 
-        n_expression = expression[left_index:right_index]
-        expression = expression[:left_index - 1] + str(calc(n_expression)) + expression[right_index + 1:]
-    
-    #negate double negatives
-    while "--" in expression:
-        i = expression.index("--")
-        if i == 0 or not expression[i-1].isnumeric():
-            expression = expression[:i] + expression[i + 2:]
-        else:
-            expression = expression[:i] + "+" + expression[i + 2:]
-            
-    numbers = []
-    syms = []
-    running_n = ""
-    is_first = True
-    for c in expression:
-        if c == "-" and is_first:
-            running_n = c
-            is_first = False
-            continue
-        is_first = False
-        if c.isnumeric():
-            running_n += c
-        else:
-            numbers.append(int(running_n))
-            syms.append(c)
-            running_n = ""
-            is_first = True
-    else:
-        numbers.append(int(running_n))
-    
-            
-    while "*" in syms or "/" in syms:
-        #brute force find first index of * or /
-        i = 0
-        while not (syms[i] == "*" or syms[i] == "/"):
-            i += 1
-        sym = syms.pop(i)
-        n1 = numbers.pop(i)
-        n2 = numbers.pop(i)
-        
-        numbers.insert(i, pseudo_eva(n1, n2, sym))
-        
-    while "+" in syms or "-" in syms:
-        #brute force find first index of * or /
-        i = 0
-        while not (syms[i] == "+" or syms[i] == "-"):
-            i += 1
-        sym = syms.pop(i)
-        n1 = numbers.pop(i)
-        n2 = numbers.pop(i)
-        
-        numbers.insert(i, pseudo_eva(n1, n2, sym))
+        n_e_list = e_list[left_index:right_index]
+        e_list = e_list[:left_index - 1] + sub_calc(n_e_list) + e_list[right_index + 1:]
 
-    return numbers[0]
+    while "*" in e_list or "/" in e_list:
+        # brute force find first index of * or /
+        i = 0
+        while not (e_list[i] == "*" or e_list[i] == "/"):
+            i += 1
+        i -= 1
+        n1 = e_list.pop(i)
+        sym = e_list.pop(i)
+        n2 = e_list.pop(i)
 
+        e_list.insert(i, pseudo_eva(n1, n2, sym))
+
+    while "+" in e_list or "-" in e_list:
+        # brute force find first index of * or /
+        i = 0
+        while not (e_list[i] == "+" or e_list[i] == "-"):
+            i += 1
+        i -= 1
+        n1 = e_list.pop(i)
+        sym = e_list.pop(i)
+        n2 = e_list.pop(i)
+
+        e_list.insert(i, pseudo_eva(n1, n2, sym))
+
+    return e_list
+
+
+def pseudo_eva(n1, n2, sym):
+    # Due to API restrictions, this is the best way I can think to translate the symbols to an operation
+    if sym == "+":
+        return n1 + n2
+    elif sym == "-":
+        return n1 - n2
+    elif sym == "*":
+        return n1 * n2
+    elif sym == "/":
+        return n1 / n2
