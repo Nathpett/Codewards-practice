@@ -1,5 +1,7 @@
 def calc(expression):
-    #rewrote the whole thing and that didn't fix it... I'll just need to break down what's going on for these edge cases somehow
+    #Evaluate basic mathimatical expressions without using eval() or exec() 
+
+    NUMERIC = ".0123456789"
     # remove whitespace for easier parsing
     expression = expression.replace(" ", "")
 
@@ -8,27 +10,11 @@ def calc(expression):
     running_n = ""
     i = 0
     while i < len(expression):
-        while i < len(expression) and not (expression[i].isnumeric()):
-            if expression[i] == "-":
-                if expression[i + 1] == "(":
-                    if i != 0 and expression[i - 1].isnumeric():
-                        expr_list += ["+"]
-                    expr_list += [-1, "*", "("]
-                    i += 2
-                    continue
-                else:
-                    if i != 0 and expression[i - 1].isnumeric():
-                        expr_list += ["+"]
-                    if running_n == "-":
-                        running_n = ""
-                    else:
-                        running_n = expression[i]
-                    i += 1
-            else:
-                expr_list += expression[i]
-                i += 1
+        while i < len(expression) and not expression[i] in NUMERIC:
+            expr_list += expression[i]
+            i += 1
 
-        while i < len(expression) and expression[i].isnumeric():
+        while i < len(expression) and expression[i] in NUMERIC:
             running_n += expression[i]
             i += 1
         else:
@@ -62,6 +48,19 @@ def sub_calc(e_list):
         n_e_list = e_list[left_index:right_index]
         e_list = e_list[:left_index - 1] + sub_calc(n_e_list) + e_list[right_index + 1:]
 
+        
+    #give all negative numbers a negative value
+    if "-" in e_list:
+        j = 0
+        for i in range(e_list.count("-")):
+            j = e_list.index("-", j)
+            #sign is only a negative sign when the item to it's left is not a number and the item to its right is a number
+            if (j == 0 or not isinstance(e_list[j - 1], float)) and isinstance(e_list[j + 1], float):
+                e_list[j + 1] *= -1
+                del e_list[j]
+            j += 1
+            
+            
     while "*" in e_list or "/" in e_list:
         # brute force find first index of * or /
         i = 0
