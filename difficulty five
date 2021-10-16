@@ -277,3 +277,80 @@ def number_to_english(n):
     else:
         s = number_to_english_3_didget(n.rjust(3, "0"))
     return s.strip()
+
+class Connect4():
+    #Simple connect 4 game
+    def __init__(self):
+        self.column_ct = 7
+        self.row_ct = 6
+        
+        self.board = [[0] * self.row_ct  for i in range(self.column_ct)]
+        self.cur_player = 1
+        self.game_over = False
+        
+    def play(self, col):
+        if self.game_over:
+            return 'Game has finished!'
+        
+        if self.board[col][0] != 0:
+            return "Column full!"
+        row = 0
+        while row != self.row_ct - 1 and self.board[col][row + 1] == 0:
+            row += 1
+        self.board[col][row] = self.cur_player
+        if self.is_win(col, row):
+            self.game_over = True
+            return f"Player {self.cur_player} wins!"
+        
+        #change player
+        m = f"Player {self.cur_player} has a turn"
+        self.cur_player = (self.cur_player % 2 + 1)
+        return m
+    
+    def is_win(self, col, row):
+        player = self.board[col][row]
+        #horizontal
+        running_n = 1
+        for i in [-1, 1]:
+            j = i
+            while 0 <= col + j < self.column_ct and self.board[col + j][row] == player:
+                running_n += 1
+                j += i
+        if running_n >= 4:
+            return True
+        
+        #vertical
+        running_n = 1
+        for i in [-1, 1]:
+            j = i
+            while 0 <= row + j < self.row_ct and self.board[col][row + j] == player:
+                running_n += 1
+                j += i
+        if running_n >= 4:
+            return True
+        
+        #diagonal 1
+        running_n = 1
+        for i in [-1, 1]:
+            j = i
+            while (0 <= row + j < self.row_ct) and (0 <= col + j < self.column_ct) and self.board[col + j][row + j] == player:
+                running_n += 1
+                j += i
+        if running_n >= 4:
+            return True
+        
+        #diagonal 2
+        running_n = 1
+        for i in [-1, 1]:
+            j = i
+            while (0 <= row + j < self.row_ct) and (0 <= col - j < self.column_ct) and self.board[col - j][row + j] == player:
+                running_n += 1
+                j += i
+        if running_n >= 4:
+            return True
+        
+        return False
+        
+    def print_board(self):
+        board = [[self.board[col][i] for col in range(7)] for i in range(6)]
+        print("".join([repr(row) + "\n" for row in board]).replace(", ", " | "))
