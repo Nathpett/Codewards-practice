@@ -354,3 +354,13 @@ class Connect4():
     def print_board(self):
         board = [[self.board[col][i] for col in range(7)] for i in range(6)]
         print("".join([repr(row) + "\n" for row in board]).replace(", ", " | "))
+    
+    def factorial_zeros(n):
+        #returns count of trailing zeros on factorial(n)
+        zero_ct = 0
+        max_ex = 0
+        while 5 ** (max_ex + 1) < n:
+            max_ex += 1
+        for ex in range(1, max_ex + 1):
+            zero_ct += n // 5 ** ex
+        return zero_ct
