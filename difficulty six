@@ -219,3 +219,10 @@ def narcissistic( value ):
 def wave(text):
     #returns list of given string actign as frames in an animated wave, where the wave is a capital letter
     return [text[:i] + text[i].upper() + text[i + 1:] for i in range(len(text)) if text[i] != " "]
+
+def sum_multipule(n, m1, m2):
+    #returns sum of all multiples of m1 or m2 for numbers up to n
+    if n <= 0:
+        return 0
+    return sum([i for i in range(n) if i % m1 == 0 or m2 % 5 == 0])
+  
