@@ -391,3 +391,34 @@ def gap(g, m, n):
         p1 = p2
     return None
         
+def pig_it(text):
+    #WIP, supposed to convert to piglatin ignoring punctuation.  I should really learn regex
+    ALP_S = "ABCDEFGHIJKLMNOPQRSTUVWXYZ "
+    
+    #save index and Value of all puctuation, also delete them
+    pun_map = {}
+    for i, c in enumerate(text):
+        if c.upper() not in ALP_S:
+            pun_map[i] = c
+    
+    #delete chars backwards
+    if pun_map:
+        keys = list(pun_map.keys())
+        keys.sort(reverse =False)
+        text = list(text)
+        for i in keys:
+            del text[i]
+        text = "".join(text)
+    
+    text = text.split(" ")
+    for i, word in enumerate(text):
+        text[i] = word[1:] + word[0] + "ay"
+    text = " ".join(text)
+    
+    if pun_map:
+        text = list(text)
+        for i in keys:
+            text[i].insert(pun_map[i])
+        text = "".join(text)
+    
+    return text
