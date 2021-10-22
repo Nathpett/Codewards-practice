@@ -400,3 +400,55 @@ def pig_it(text):
         if item.isalpha():
             text[i] = item[1:] + item[0] + "ay"
     return "".join(text)
+
+def who_eats_who(zoo):
+    #returns event log of organisms eating eachother using the folloing rules: 
+    #Animals can only eat things beside them
+    #Animals always eat to their LEFT before eating to their RIGHT
+    #Always the LEFTMOST animal capable of eating will eat before any others
+    #Any other things you may find at the zoo (which are not listed above) do not eat anything and are not edible
+    
+    RELA = [item.split(" eats ") for item in """antelope eats grass
+big-fish eats little-fish
+bug eats leaves
+bear eats big-fish
+bear eats bug
+bear eats chicken
+bear eats cow
+bear eats leaves
+bear eats sheep
+chicken eats bug
+cow eats grass
+fox eats chicken
+fox eats sheep
+giraffe eats leaves
+lion eats antelope
+lion eats cow
+panda eats leaves
+sheep eats grass""".split("\n")]
+    LAWS = {}
+    for item in RELA:
+        if item[0] not in LAWS.keys():
+            LAWS[item[0]] = []
+        LAWS[item[0]].append(item[1])
+    
+    initial_zoo = zoo
+    zoo = zoo.split(",")
+    event_log = []
+    i = 0
+    while i != len(zoo):
+        organism = zoo[i]
+        if organism in LAWS.keys():
+            #attempt eat left
+            if i != 0 and zoo[i-1] in LAWS[organism]:
+                event_log.append(f'{organism} eats {zoo[i-1]}')
+                del zoo[i - 1]
+                i = 0
+                continue
+            if i != len(zoo)-1 and zoo[i+1] in LAWS[organism]:
+                event_log.append(f'{organism} eats {zoo[i+1]}')
+                del zoo[i + 1]
+                i = 0
+                continue
+        i += 1
+    return [initial_zoo] + event_log + [",".join(zoo)]
