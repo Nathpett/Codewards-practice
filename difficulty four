@@ -1,3 +1,5 @@
+import re
+
 def get_pins(observed):
     #brute force guesses a pin pad given seed values as potential ranges.  Returns list of all possible combinations given observed pin pad input offset by atleast one key horizontally or vertically.
     PIN_PAD = ["123", "456", "789", " 0 "]
@@ -130,3 +132,24 @@ def valid_sudoku(board):
             cells[i//3 + 3 * (j//3)].append(n)
     
     return simple_validate(board) and simple_validate(cells) and simple_validate(columns)
+    
+def top_3_words(text):
+    #returns top 3 most common words in a given text
+    text = re.findall(r"[A-Za-z|']+", text)
+    word_cts = {}
+    for word in text:
+        if word.count("'") != len(word):
+            word = word.lower()
+            word_cts[word] = word_cts.get(word, 0) + 1
+    
+    champs = []
+    champ_ct = 0 #champ_ct is set by the 3rd place's count
+    for word, ct in word_cts.items():
+        if ct > champ_ct or len(champs) < 3:
+            champs.append(word)
+            champs.sort(key=word_cts.get, reverse = True)
+            if len(champs) > 3:
+                champs = champs[:3]
+            champ_ct = word_cts[champs[-1]]
+            
+    return champs
