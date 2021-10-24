@@ -226,3 +226,7 @@ def sum_multipule(n, m1, m2):
         return 0
     return sum([i for i in range(n) if i % m1 == 0 or m2 % 5 == 0])
   
+def find_missing_number(numbers):
+    #Returns missing number in unsorted list of numbers 1 to n
+    return (len(numbers) + 1)/2 * (2 + len(numbers)) - sum(numbers)
+    
