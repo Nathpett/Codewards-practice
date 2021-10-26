@@ -183,5 +183,14 @@ def top_3_words(text):
             
         return r
 
+
     def from_roman(roman_num):
-        return 0
+        NUM = {'I':1, "V":5, "X":10, "L":50, "C":100, "D":500, "M":1000}
+        n = 0
+        for i, c in enumerate(roman_num):
+            if i != len(roman_num) - 1 and NUM[c] < NUM[roman_num[i+1]]:
+                n -= NUM[c]
+            else:
+                n += NUM[c]
+        
+        return n
