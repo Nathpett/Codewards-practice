@@ -272,6 +272,68 @@ def volume(heightmap):
             while h in row:
                 x = row.index(h)
                 vol += flood_fill(x, y)
-
-
     return vol
+
+def validate_battlefield(field):
+    #validates legal battlefield maps.  WIP
+    def grab_ship(row, col):
+        size = 1
+        #because scanning prioritizes top and left, we only have to look right and down each step
+        while True:
+            field[row][col] = 0
+            
+            if size == 4:
+                return size
+            
+            right = field[row][col + 1]
+            down = field[row + 1][col]
+            
+            #ships touching, return False for error handling
+            if 1 == right == down:
+                return False
+
+            if 0 == right == down:
+                field[row][col] = 0
+                return size
+            
+            if size == 1:
+                #set direction of the ship we're scanning
+                if right:
+                    dir = (0, 1)
+                    col += 1
+                if down:
+                    dir = (1, 0)
+                    row += 1
+                size += 1
+                continue
+
+            if dir[0]:
+                if not down:
+                    return size
+                size += 1
+                row += 1
+            else:
+                if not right:
+                    return size
+                size += 1
+                col += 1
+
+        
+    #wrap field in extra zeros so we don't have to worry about list limits
+    field = [[0]* len(field)] + field + [[0]* len(field)]
+    field = [[0] + row + [0] for row in field]
+    
+    ship_ct_dict = {1:4, 2:3, 3:2, 4:1} # size:count
+    for i, row in enumerate(field):
+        while 1 in row:
+            seed_col = row.index(1)
+            new_size = grab_ship(i, seed_col)
+            if not new_size:
+                return False
+            #too many of this size already found
+            if ship_ct_dict[new_size] == 0:
+                return False
+            ship_ct_dict[new_size] -= 1
+
+    #all values must be zero by the end
+    return not any(ship_ct_dict.values())
