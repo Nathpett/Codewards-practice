@@ -275,7 +275,6 @@ def volume(heightmap):
     return vol
 
 def validate_battlefield(field):
-    #validates legal battlefield maps.  WIP
     def grab_ship(row, col):
         size = 1
         #because scanning prioritizes top and left, we only have to look right and down each step
@@ -292,10 +291,13 @@ def validate_battlefield(field):
             if 1 == right == down:
                 return False
 
+            if field[row + 1][col + 1] or field[row - 1][col - 1] or field[row - 1][col + 1] or field[row + 1][col - 1]:
+                return False
+            
             if 0 == right == down:
                 field[row][col] = 0
                 return size
-            
+
             if size == 1:
                 #set direction of the ship we're scanning
                 if right:
@@ -318,7 +320,6 @@ def validate_battlefield(field):
                 size += 1
                 col += 1
 
-        
     #wrap field in extra zeros so we don't have to worry about list limits
     field = [[0]* len(field)] + field + [[0]* len(field)]
     field = [[0] + row + [0] for row in field]
