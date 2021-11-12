@@ -230,3 +230,15 @@ def find_missing_number(numbers):
     #Returns missing number in unsorted list of numbers 1 to n
     return (len(numbers) + 1)/2 * (2 + len(numbers)) - sum(numbers)
     
+def is_square(points):
+    #returns True if list of points forms a square
+    def man_dist(a, b):
+        return (a[0] - b[0])**2 + (a[1] - b[1])**2
+    if len(points) != 4:
+        return False
+    r = points.pop(0)
+    dists = [man_dist(r, i) for i in points]
+    dists.sort()
+    if 0 in dists or dists[0] != dists[1]:
+        return False
+    return abs(2 * dists[0]) == abs(dists[2])
