@@ -241,4 +241,4 @@ def is_square(points):
     dists.sort()
     if 0 in dists or dists[0] != dists[1]:
         return False
-    return abs(2 * dists[0]) == abs(dists[2])
+    return 2 * dists[0] == dists[2]
