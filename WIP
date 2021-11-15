@@ -1,0 +1,27 @@
+#work in progress
+def partitions(n):
+    r = 0
+    a = [1] * n
+    r += 1
+    #from the highest pair, subtract 1 and add 1.  
+    #if no pair, from the smallest, add to the next smallest
+    while len(a) != 1:
+        #find highest pair
+        i = 0
+        while i < len(a) - 1 and a[i] != a[i + 1]:
+            i += 1
+        if i != len(a) - 1 and a[i] == a[i + 1]:
+            a[i] += 1
+            a[i + 1] -= 1
+            if a[i + 1] == 0:
+                del a[i + 1]
+        else:
+            min_index = a.index(min(a))  #first index of lowest number
+            min_2nd_index = a[:min_index].index(min(a[:min_index])) #first index of 2nd lowest number
+            a[min_2nd_index] += 1
+            a[min_index] -= 1
+            if a[min_index] == 0:
+                del a[min_index]
+        a.sort(reverse=True)
+        r += 1
+    return r
