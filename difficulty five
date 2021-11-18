@@ -462,3 +462,15 @@ def rgb(r, g, b):
 def move_zeros(array):
     #reorders array to have 0s at end
     return [i for i in array if i != 0] + [0] * array.count(0)
+    
+def valid_parentheses(string):
+    #takes string of parentheses, determines whether the order of the parentheses is valid for evaluation
+    opened = 0
+    for p in string:
+        if p == "(":
+            opened += 1
+        elif p == ")":
+            opened -= 1
+        if opened < 0:
+            return False
+    return opened == 0
