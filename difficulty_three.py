@@ -340,41 +340,46 @@ def validate_battlefield(field):
     return not any(ship_ct_dict.values())
 
 def sudoku(puzzle):
-    #WIP, easy sudoku solver
+    # Solves easy sudoku.  determinable sudokus without the need for guessing unknowns and testing them.  
     def get_potentials(puzzle, n):
-        potentials = [i + 1 for i in range(9)]
+        if puzzle[n // 9][n % 9] == 0:
+            potentials = [i + 1 for i in range(9)]
+        else:
+            potentials = puzzle[n // 9][n % 9]
         pools = [get_col(puzzle, n), get_row(puzzle, n), get_cel(puzzle, n)]
         for pool in pools:
             potentials = [x for x in potentials if x not in pool]
-            #TODO use potentials list in other cels to inform the potentials being generated...
-            
-        if len(potentials) = 1:
+        if len(potentials) == 1:
             return potentials[0]
         else:
             return potentials
-        
+
     def get_col(puzzle, n):
         x = n % 9
         return [puzzle[i][x] for i in range(9)]
-    
+
     def get_row(puzzle, n):
         y = n // 9
         return puzzle[y]
-    
+
     def get_cel(puzzle, n):
         # get 9x9 cel that n lies in
         x = ((n % 9) // 3) * 3
         y = ((n // 9) // 3) * 3
+        return [puzzle[y + i][x:x + 3][j] for j in range(3) for i in range(3)]
 
-        return [puzzle[y + i][x:x + 3] for i in range(3)]
-    
-    
-    for i in range(81):
-        x = n % 9
-        y = n // 9
-        n = puzzle[y][x]
-        if isinstance(n, list) or n == 0:
-            puzzle[y][x] = get_potentials[puzzle, n]
-        
-    
+    empty = 0
+    for row in puzzle:
+        empty += row.count(0)
+
+    while empty != 0:
+        for i in range(81):
+            x = i % 9
+            y = i // 9
+            n = puzzle[y][x]
+            if isinstance(n, list) or n == 0:
+                puzzle[y][x] = get_potentials(puzzle, i)
+                if not isinstance(puzzle[y][x], list):
+                    empty -= 1
+
     return puzzle
