@@ -196,7 +196,7 @@ def top_3_words(text):
         return n
 
 from math import ceil
-#WIP
+#WIP MAJOR BREAKTHROUGH! ODD LENGTHS CHANGE INDEX BY 10, BUT EVEN CHANGE IT BY 9!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 def find_reverse_number(n):
     r_len = 1
     skipped = 0
