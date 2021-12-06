@@ -194,3 +194,37 @@ def top_3_words(text):
                 n += NUM[c]
         
         return n
+
+from math import ceil
+#WIP
+def find_reverse_number(n):
+    r_len = 1
+    skipped = 0
+    while n >= 10 ** ceil(r_len / 2):
+        skipped += 10 ** ceil(r_len / 2)
+        n -= 10 ** ceil(r_len / 2)
+        r_len += 1
+
+    # With the length of r, we can assemble list of symmetrical 1/0 numbers, the index of which each element changes
+    # n by 10^i
+    sym_list = []
+    for i in range(ceil(r_len / 2) - 1, -1, -1):
+        sym = ["0"] * r_len
+        sym[i] = "1"
+        sym[r_len - 1 - i] = "1"
+        sym_list.append(int("".join(sym)))
+
+    # If we change r by value in sym_list at index i, n decreases by 10^i
+    # starting at largest number, add values in sym_list until n==0
+
+    r = sym_list[-1]
+    i = len(sym_list) - 1
+    while n > 0:
+        if n >= 10 ** i:
+            mult = n // 10 ** i
+            n = n % 10 ** i
+            r += mult * sym_list[i]
+        else:
+            i -= 1
+
+    return r
